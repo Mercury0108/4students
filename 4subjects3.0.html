@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4S Mentorship Portal</title>
+    <style>
+        :root {
+            /* Brand Accents */
+            --primary-purple: #2b0955; 
+            --purple-light: #6a1b9a;
+            --vibrant-orange: #ff6b00;
+            --orange-light: #ffa726;
+            --teal-accent: #00bfa5;
+            --pink-accent: #ff4081;
+            --danger: #ef4444;
+            --success: #10b981;
+
+            /* Light Theme Defaults */
+            --text-main: #1e1b4b;
+            --text-muted: #64748b;
+            --bg-1: #f3e8ff;
+            --bg-2: #ffecd2;
+            --bg-3: #e0f2fe;
+            --bg-4: #fce4ec;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --card-border: rgba(255, 255, 255, 1);
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --input-border: #e2e8f0;
+            --input-text: #1e1b4b;
+            --dropdown-bg: rgba(255, 255, 255, 0.98);
+            --dropdown-hover: linear-gradient(90deg, #faf5ff, #fff7ed);
+            --dropdown-border: rgba(43, 9, 85, 0.1);
+            --list-item-bg: rgba(255, 255, 255, 0.9);
+            --list-item-hover: white;
+            --modal-bg: #ffffff;
+            --role-card-bg: #ffffff;
+        }
+
+        /* Dark Theme Overrides */
+        body.dark-mode {
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --bg-1: #0f172a;
+            --bg-2: #1e1b4b;
+            --bg-3: #172554;
+            --bg-4: #2e1065;
+            --nav-bg: rgba(15, 23, 42, 0.95);
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-border: rgba(51, 65, 85, 0.5);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: #334155;
+            --input-text: #f8fafc;
+            --dropdown-bg: rgba(30, 41, 59, 0.98);
+            --dropdown-hover: linear-gradient(90deg, #1e293b, #334155);
+            --dropdown-border: rgba(255, 255, 255, 0.1);
+            --list-item-bg: rgba(15, 23, 42, 0.6);
+            --list-item-hover: rgba(30, 41, 59, 1);
+            --modal-bg: #1e293b;
+            --role-card-bg: #1e293b;
+        }
+
+        /* Animated Vibrant Background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, var(--bg-1), var(--bg-2), var(--bg-3), var(--bg-4));
+            background-size: 300% 300%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Navigation Bar */
+        nav {
+            position: relative;
+            z-index: 1000;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 75px;
+            box-sizing: border-box;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(to right, var(--primary-purple), var(--vibrant-orange), var(--teal-accent)) 1;
+            transition: background-color 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-emblem {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-purple), var(--vibrant-orange));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(43, 9, 85, 0.25);
+            color: white;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .logo-character {
+            font-family: 'Brush Script MT', 'Caveat', cursive;
+            font-style: italic;
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--vibrant-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        /* Top Right Actions (Dark Mode + Profile) */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle-btn:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+
+        /* Profile & Dropdown Menu */
+        .profile-container {
+            display: none;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .profile-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--pink-accent), var(--vibrant-orange));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+            transition: all 0.3s;
+            border: 2px solid var(--card-bg);
+        }
+
+        .profile-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background-color: var(--dropdown-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            width: 220px;
+            overflow: hidden;
+            z-index: 1002;
+            border: 1px solid var(--dropdown-border);
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-menu button {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--card-border);
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .dropdown-menu button:hover {
+            background: var(--dropdown-hover);
+            color: var(--vibrant-orange);
+            padding-left: 1.5rem;
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            padding: 3rem 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        #teacher-dashboard {
+            transition: margin-top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #teacher-dashboard.shifted {
+            margin-top: 140px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Cards & Layout */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--card-border);
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: background 0.3s ease, border 0.3s ease;
+        }
+
+        .role-card {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--role-card-bg);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(106,27,154,0.1), rgba(255,107,0,0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .role-card:hover::before {
+            opacity: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--pink-accent) 100%);
+            color: white;
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: 700;
+            box-shadow: 0 6px 15px rgba(255, 64, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.5);
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, var(--vibrant-orange) 0%, var(--orange-light) 100%);
+            box-shadow: 0 6px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-teal {
+            background: linear-gradient(135deg, var(--teal-accent) 0%, #1de9b6 100%);
+            box-shadow: 0 6px 15px rgba(0, 191, 165, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--vibrant-orange);
+            border: 2px solid var(--vibrant-orange);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 107, 0, 0.1);
+        }
+
+        /* Inputs & Forms */
+        input[type="text"], input[type="password"], input[type="email"], input[type="url"], textarea, select {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            margin: 0.5rem 0 1.2rem 0;
+            border: 2px solid var(--input-border);
+            border-radius: 16px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            background: var(--input-bg);
+            color: var(--input-text);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--teal-accent);
+            box-shadow: 0 0 15px rgba(0, 191, 165, 0.2);
+        }
+
+        /* Checkbox Styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--vibrant-orange);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 5, 30, 0.8);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--modal-bg);
+            padding: 3rem;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            color: var(--text-main);
+            transition: background 0.3s ease;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 25px;
+            background: none; border: none;
+            font-size: 2rem; cursor: pointer; color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--danger); }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.8rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Lists */
+        .item-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .item-list li {
+            background: var(--list-item-bg);
+            margin-bottom: 1rem;
+            padding: 1.2rem;
+            border-radius: 16px;
+            border-left: 5px solid var(--vibrant-orange);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .item-list li:hover {
+            transform: translateX(4px);
+            background: var(--list-item-hover);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .item-list li a {
+            color: var(--teal-accent);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
+        .item-list li a:hover {
+            color: var(--pink-accent);
+            text-decoration: underline;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .delete-btn:hover { background: #b91c1c; }
+
+        h1, h2, h3 {
+            background: linear-gradient(135deg, var(--primary-purple), var(--vibrant-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 0;
+        }
+        
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+             background: linear-gradient(135deg, #e0f2fe, var(--vibrant-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav>
+        <div class="logo">
+            <div class="logo-emblem">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            </div>
+            <span class="logo-character">4S</span>
+        </div>
+        
+        <div class="nav-actions">
+            <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+
+            <div class="profile-container" id="profile-container">
+                <div class="profile-icon" onclick="toggleDropdown()" id="profile-icon">M</div>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <button id="add-user-btn" style="display: none;" onclick="closeDropdown(); openModal('add-user-modal');">➕ Add User</button>
+                    <button id="list-users-btn" style="display: none;" onclick="closeDropdown(); showView('users-list-view');">👥 The list of users</button>
+                    <button onclick="closeDropdown(); logout();">🚪 Log out</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- VIEW 1: ROLE SELECTION -->
+    <div id="role-selection" class="view active">
+        <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">Welcome to 4S Mentorship</h1>
+        <div class="grid-2">
+            <div class="card role-card" onclick="openLoginModal('teacher')">
+                <div style="font-size: 5rem; margin-bottom: 1rem;">👨‍🏫</div>
+                <h2 style="font-size: 2rem;">Teacher</h2>
+                <p style="color: var(--text-muted);">Login to check homework & post study plans</p>
+            </div>
+            <div class="card role-card" onclick="openLoginModal('student')">
+                <div style="font-size: 5rem; margin-bottom: 1rem;">🎓</div>
+                <h2 style="font-size: 2rem;">Student</h2>
+                <p style="color: var(--text-muted);">Login to view tasks & upload completed homework</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: TEACHER MAIN DASHBOARD -->
+    <div id="teacher-dashboard" class="view">
+        <h1 style="font-size: 2.5rem; text-align: center;">Teacher Workspace</h1>
+        
+        <div class="card" style="border-top: 6px solid var(--primary-purple); text-align: left;">
+            <h2>🎓 Student Roster & Homework Checking</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Select a student from the list to assign today's session homework, update their study plan, or check their submitted homework.</p>
+
+            <label style="font-weight: bold;">Select Student:</label>
+            <select id="teacher-student-select" onchange="loadStudentHomeworkData()"></select>
+
+            <div id="student-management-box" style="margin-top: 1.5rem; background: var(--input-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--input-border);">
+                <h3 id="selected-student-title">Student Profile</h3>
+
+                <label style="font-weight: bold; margin-top: 1rem; display:block;">Today's Homework & Study Plan for this Student:</label>
+                <textarea id="teacher-homework-input" rows="4" placeholder="Assign today's homework tasks or study plan for this student..."></textarea>
+                <button class="btn btn-orange" style="width: auto; padding: 0.6rem 1.5rem; margin-bottom: 2rem;" onclick="saveStudentHomework()">Save Assignment / Plan</button>
+
+                <h3>Submitted Homeworks by Student</h3>
+                <ul class="item-list" id="submitted-homework-list"></ul>
+            </div>
+        </div>
+
+        <div class="card" style="border-left: 6px solid var(--teal-accent);">
+            <h2>Upload Learning Material</h2>
+            <input type="text" id="material-title" placeholder="Material Title (e.g., Week 1 Physics Guide)">
+            <input type="url" id="material-url" placeholder="Paste Google Drive, Docs, or YouTube Link">
+            <button class="btn btn-teal" onclick="uploadMaterial()">Add Material</button>
+        </div>
+
+        <div class="card">
+            <h2>Shared Materials Directory</h2>
+            <ul class="item-list" id="teacher-materials-list"></ul>
+        </div>
+    </div>
+
+    <!-- VIEW 3: STUDENT DASHBOARD -->
+    <div id="student-dashboard" class="view">
+        <h1 style="font-size: 2.5rem; text-align: center;">My Study Workspace</h1>
+        
+        <div class="grid-2">
+            <div class="card" style="border-top: 6px solid var(--vibrant-orange); text-align: left;">
+                <h2>📘 Today's Session & Study Plan</h2>
+                <div id="student-assigned-plan" style="background: var(--input-bg); padding: 1.2rem; border-radius: 16px; min-height: 120px; white-space: pre-wrap; border: 1px solid var(--input-border); color: var(--text-main);">
+                    No homework or study plan posted for today yet.
+                </div>
+
+                <h3 style="margin-top: 2rem;">📤 Upload Completed Homework</h3>
+                <input type="text" id="student-hw-title" placeholder="Assignment Title (e.g., Math Homework Ex 4)">
+                <input type="url" id="student-hw-url" placeholder="Paste Link to your Google Doc / Drive file">
+                <button class="btn btn-orange" onclick="submitHomework()">Submit Homework</button>
+            </div>
+
+            <div class="card" style="border-top: 6px solid var(--primary-purple); text-align: left;">
+                <h2>📚 Available Course Materials</h2>
+                <ul class="item-list" id="student-materials-list"></ul>
+
+                <h3 style="margin-top: 2rem;">My Submissions</h3>
+                <ul class="item-list" id="my-submissions-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 4: REGISTERED USERS LIST (Teacher Only) -->
+    <div id="users-list-view" class="view">
+        <button class="btn btn-outline" style="width:auto; padding: 0.5rem 1.5rem; margin-bottom: 1.5rem;" onclick="showView('teacher-dashboard')">← Back to Workspace</button>
+        <div class="card">
+            <h1 style="margin-bottom: 2rem;">User Account Management</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Here you can view all registered credentials and permanently remove users from the platform.</p>
+            <ul class="item-list" id="all-users-list"></ul>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
+            <h2 id="login-title">Login</h2>
+            <div id="login-error" class="error-msg">Invalid credentials for this role.</div>
+            
+            <input type="hidden" id="login-role">
+            <label style="font-weight: bold; margin-bottom: 0.5rem; display:block; text-align:left;">Email</label>
+            <input type="email" id="login-email" placeholder="Enter your email" required>
+            
+            <label style="font-weight: bold; margin-bottom: 0.5rem; display:block; text-align:left;">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required>
+            
+            <!-- Remember Me Feature -->
+            <label class="checkbox-container">
+                <input type="checkbox" id="remember-me">
+                <span>Remember my login on this device</span>
+            </label>
+
+            <button class="btn" onclick="attemptLogin()">Sign In</button>
+        </div>
+    </div>
+
+    <!-- ADD USER MODAL (Teacher Only) -->
+    <div class="modal-overlay" id="add-user-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('add-user-modal')">&times;</button>
+            <h2>Register New User</h2>
+            <div id="add-user-msg" class="error-msg" style="color:var(--teal-accent); background:rgba(0, 191, 165, 0.1); border-color:var(--teal-accent);"></div>
+            
+            <label style="font-weight: bold; margin-bottom: 0.5rem; display:block; text-align:left;">Email</label>
+            <input type="email" id="new-user-email" placeholder="User Email" required>
+            
+            <label style="font-weight: bold; margin-bottom: 0.5rem; display:block; text-align:left;">Password</label>
+            <input type="password" id="new-user-pwd" placeholder="Temporary Password" required>
+            
+            <label style="font-weight: bold; margin-bottom: 0.5rem; display:block; text-align:left;">Role</label>
+            <select id="new-user-role">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+            </select>
+            
+            <button class="btn btn-orange" onclick="registerUser()">Create Account</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- THEME LOGIC ---
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('theme-btn');
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                btn.innerText = '☀️';
+                localStorage.setItem('4s_theme', 'dark');
+            } else {
+                btn.innerText = '🌙';
+                localStorage.setItem('4s_theme', 'light');
+            }
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('4s_theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-btn').innerText = '☀️';
+            }
+        };
+
+        // --- LOCAL STORAGE DATA SYNC ---
+        let users = JSON.parse(localStorage.getItem('4s_users'));
+        if (!users) {
+            users = [
+                { email: 'maqsudbekobidov1401@gmail.com', password: 'nomercy', role: 'teacher' }
+            ];
+            localStorage.setItem('4s_users', JSON.stringify(users));
+        }
+
+        let globalMaterials = JSON.parse(localStorage.getItem('4s_materials')) || [];
+        let homeworkData = JSON.parse(localStorage.getItem('4s_homework_data')) || {};
+        let currentUser = null;
+
+        // --- NAVIGATION & VIEWS ---
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            closeDropdown();
+
+            if(viewId === 'teacher-dashboard') {
+                populateStudentSelect();
+                renderMaterials('teacher');
+            }
+            if(viewId === 'student-dashboard') {
+                renderMaterials('student');
+                loadStudentDashboardData();
+            }
+            if(viewId === 'users-list-view') renderUsersList();
+        }
+
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdown-menu');
+            const isActive = menu.classList.toggle('active');
+            const teacherDash = document.getElementById('teacher-dashboard');
+            
+            if (currentUser && currentUser.role === 'teacher' && teacherDash.classList.contains('active')) {
+                if (isActive) {
+                    teacherDash.classList.add('shifted');
+                } else {
+                    teacherDash.classList.remove('shifted');
+                }
+            }
+        }
+
+        function closeDropdown() {
+            document.getElementById('dropdown-menu').classList.remove('active');
+            const teacherDash = document.getElementById('teacher-dashboard');
+            if (teacherDash) {
+                teacherDash.classList.remove('shifted');
+            }
+        }
+
+        window.addEventListener('click', function(e) {
+            const container = document.getElementById('profile-container');
+            if (container && !container.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+
+        // --- MODAL & AUTHENTICATION FUNCTIONS ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            if(id === 'add-user-modal') {
+                document.getElementById('add-user-msg').style.display = 'none';
+                document.getElementById('new-user-email').value = '';
+                document.getElementById('new-user-pwd').value = '';
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function openLoginModal(role) {
+            document.getElementById('login-role').value = role;
+            document.getElementById('login-title').innerText = role === 'teacher' ? 'Teacher Login' : 'Student Login';
+            document.getElementById('login-error').style.display = 'none';
+            
+            // Check for saved credentials on this device
+            const saved = JSON.parse(localStorage.getItem('4s_remembered_' + role));
+            if (saved) {
+                document.getElementById('login-email').value = saved.email || '';
+                document.getElementById('login-password').value = saved.password || '';
+                document.getElementById('remember-me').checked = true;
+            } else {
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+                document.getElementById('remember-me').checked = false;
+            }
+
+            openModal('login-modal');
+        }
+
+        function attemptLogin() {
+            const role = document.getElementById('login-role').value;
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pass = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+            
+            const foundUser = users.find(u => u.email.toLowerCase() === email && u.password === pass && u.role === role);
+
+            if (foundUser) {
+                currentUser = foundUser;
+                closeModal('login-modal');
+                
+                // Handle "Remember Me" saving/clearing for this device
+                if (rememberMe) {
+                    localStorage.setItem('4s_remembered_' + role, JSON.stringify({ email: email, password: pass }));
+                } else {
+                    localStorage.removeItem('4s_remembered_' + role);
+                }
+
+                // Show Profile Icon
+                document.getElementById('profile-container').style.display = 'block';
+                document.getElementById('profile-icon').innerText = email.charAt(0).toUpperCase();
+                
+                if (role === 'teacher') {
+                    document.getElementById('add-user-btn').style.display = 'block';
+                    document.getElementById('list-users-btn').style.display = 'block';
+                    showView('teacher-dashboard');
+                } else {
+                    document.getElementById('add-user-btn').style.display = 'none';
+                    document.getElementById('list-users-btn').style.display = 'none';
+                    showView('student-dashboard');
+                }
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            closeDropdown();
+            document.getElementById('profile-container').style.display = 'none';
+            showView('role-selection');
+        }
+
+        // --- USER MANAGEMENT (Teacher Only) ---
+        function registerUser() {
+            const email = document.getElementById('new-user-email').value.trim();
+            const pass = document.getElementById('new-user-pwd').value;
+            const role = document.getElementById('new-user-role').value;
+            const msgBox = document.getElementById('add-user-msg');
+
+            if (!email || !pass) {
+                msgBox.innerText = "Please enter both email and password.";
+                msgBox.style.color = "var(--danger)";
+                msgBox.style.display = "block";
+                return;
+            }
+
+            if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+                msgBox.innerText = "User with this email already exists.";
+                msgBox.style.color = "var(--danger)";
+                msgBox.style.display = "block";
+                return;
+            }
+
+            users.push({ email: email, password: pass, role: role });
+            localStorage.setItem('4s_users', JSON.stringify(users));
+
+            msgBox.innerText = `Success! Created ${role} account.`;
+            msgBox.style.color = "var(--teal-accent)";
+            msgBox.style.display = "block";
+            
+            document.getElementById('new-user-email').value = '';
+            document.getElementById('new-user-pwd').value = '';
+
+            populateStudentSelect();
+        }
+
+        function renderUsersList() {
+            const list = document.getElementById('all-users-list');
+            list.innerHTML = '';
+
+            users.forEach((u, index) => {
+                const li = document.createElement('li');
+                li.style.borderLeftColor = u.role === 'teacher' ? 'var(--pink-accent)' : 'var(--teal-accent)';
+                
+                const info = document.createElement('div');
+                info.innerHTML = `<strong>${u.email}</strong> <span style="color:var(--text-muted); font-size:0.9rem;">(${u.role})</span>`;
+                
+                const actions = document.createElement('div');
+                
+                if(currentUser && u.email.toLowerCase() !== currentUser.email.toLowerCase()) {
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'delete-btn';
+                    delBtn.innerText = 'Remove User';
+                    delBtn.onclick = () => removeUser(index);
+                    actions.appendChild(delBtn);
+                } else {
+                    actions.innerHTML = `<span style="color:var(--text-muted); font-size:0.85rem;">(You)</span>`;
+                }
+
+                li.appendChild(info);
+                li.appendChild(actions);
+                list.appendChild(li);
+            });
+        }
+
+        function removeUser(index) {
+            if(confirm("Are you sure you want to remove this user?")) {
+                users.splice(index, 1);
+                localStorage.setItem('4s_users', JSON.stringify(users));
+                renderUsersList();
+                populateStudentSelect();
+            }
+        }
+
+        // --- TEACHER: STUDENT ROSTER & HOMEWORK CHECKING ---
+        function populateStudentSelect() {
+            const select = document.getElementById('teacher-student-select');
+            select.innerHTML = '';
+
+            const students = users.filter(u => u.role === 'student');
+
+            if (students.length === 0) {
+                select.innerHTML = '<option value="">No registered students found</option>';
+                document.getElementById('student-management-box').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('student-management-box').style.display = 'block';
+
+            students.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.email;
+                opt.innerText = s.email;
+                select.appendChild(opt);
+            });
+
+            loadStudentHomeworkData();
+        }
+
+        function loadStudentHomeworkData() {
+            const studentEmail = document.getElementById('teacher-student-select').value;
+            if (!studentEmail) return;
+
+            document.getElementById('selected-student-title').innerText = `Managing: ${studentEmail}`;
+
+            const data = homeworkData[studentEmail] || { plan: '', submissions: [] };
+            document.getElementById('teacher-homework-input').value = data.plan || '';
+
+            const subList = document.getElementById('submitted-homework-list');
+            subList.innerHTML = '';
+
+            if (!data.submissions || data.submissions.length === 0) {
+                subList.innerHTML = '<li style="justify-content:center; color:var(--text-muted);">No homework submitted by this student yet.</li>';
+                return;
+            }
+
+            data.submissions.forEach((sub, index) => {
+                const li = document.createElement('li');
+                
+                const link = document.createElement('a');
+                link.href = sub.url;
+                link.target = "_blank";
+                link.innerHTML = `📄 ${sub.title} <span style="font-size:0.8rem; color:var(--text-muted);">(${sub.date})</span>`;
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerText = 'Delete Submission';
+                delBtn.onclick = () => removeSubmission(studentEmail, index);
+
+                li.appendChild(link);
+                li.appendChild(delBtn);
+                subList.appendChild(li);
+            });
+        }
+
+        function saveStudentHomework() {
+            const studentEmail = document.getElementById('teacher-student-select').value;
+            const text = document.getElementById('teacher-homework-input').value;
+
+            if (!studentEmail) return;
+
+            if (!homeworkData[studentEmail]) {
+                homeworkData[studentEmail] = { plan: '', submissions: [] };
+            }
+
+            homeworkData[studentEmail].plan = text;
+            localStorage.setItem('4s_homework_data', JSON.stringify(homeworkData));
+            alert("Study Plan & Homework saved for " + studentEmail);
+        }
+
+        function removeSubmission(studentEmail, subIndex) {
+            if (confirm("Remove this student submission?")) {
+                homeworkData[studentEmail].submissions.splice(subIndex, 1);
+                localStorage.setItem('4s_homework_data', JSON.stringify(homeworkData));
+                loadStudentHomeworkData();
+            }
+        }
+
+        // --- STUDENT: WORKSPACE & HOMEWORK UPLOAD ---
+        function loadStudentDashboardData() {
+            if (!currentUser) return;
+
+            const data = homeworkData[currentUser.email] || { plan: 'No homework or study plan posted for today yet.', submissions: [] };
+            document.getElementById('student-assigned-plan').innerText = data.plan || 'No homework or study plan posted for today yet.';
+
+            const subList = document.getElementById('my-submissions-list');
+            subList.innerHTML = '';
+
+            if (!data.submissions || data.submissions.length === 0) {
+                subList.innerHTML = '<li style="justify-content:center; color:var(--text-muted);">You have not uploaded any homework yet.</li>';
+                return;
+            }
+
+            data.submissions.forEach(sub => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = sub.url;
+                link.target = "_blank";
+                link.innerHTML = `📄 ${sub.title} <span style="font-size:0.8rem; color:var(--text-muted);">(${sub.date})</span>`;
+                li.appendChild(link);
+                subList.appendChild(li);
+            });
+        }
+
+        function submitHomework() {
+            const title = document.getElementById('student-hw-title').value.trim();
+            const url = document.getElementById('student-hw-url').value.trim();
+
+            if (!title || !url) {
+                alert("Please provide both an assignment title and a file/drive link.");
+                return;
+            }
+
+            let finalUrl = url;
+            if (!/^https?:\/\//i.test(finalUrl)) {
+                finalUrl = 'https://' + finalUrl;
+            }
+
+            if (!homeworkData[currentUser.email]) {
+                homeworkData[currentUser.email] = { plan: '', submissions: [] };
+            }
+
+            const today = new Date().toLocaleDateString();
+            homeworkData[currentUser.email].submissions.push({ title: title, url: finalUrl, date: today });
+
+            localStorage.setItem('4s_homework_data', JSON.stringify(homeworkData));
+
+            document.getElementById('student-hw-title').value = '';
+            document.getElementById('student-hw-url').value = '';
+
+            alert("Homework submitted successfully!");
+            loadStudentDashboardData();
+        }
+
+        // --- MATERIALS DIRECTORY ---
+        function uploadMaterial() {
+            const title = document.getElementById('material-title').value.trim();
+            const url = document.getElementById('material-url').value.trim();
+
+            if (title && url) {
+                let finalUrl = url;
+                if (!/^https?:\/\//i.test(finalUrl)) {
+                    finalUrl = 'https://' + finalUrl;
+                }
+
+                globalMaterials.push({ title: title, url: finalUrl });
+                localStorage.setItem('4s_materials', JSON.stringify(globalMaterials));
+
+                document.getElementById('material-title').value = '';
+                document.getElementById('material-url').value = '';
+                renderMaterials('teacher');
+            } else {
+                alert("Please provide both a title and a valid link.");
+            }
+        }
+
+        function renderMaterials(viewContext) {
+            const listId = viewContext === 'teacher' ? 'teacher-materials-list' : 'student-materials-list';
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+
+            if (globalMaterials.length === 0) {
+                list.innerHTML = '<li style="justify-content:center; color:var(--text-muted);">No materials uploaded yet.</li>';
+                return;
+            }
+
+            globalMaterials.forEach((m, index) => {
+                const li = document.createElement('li');
+                
+                const link = document.createElement('a');
+                link.href = m.url;
+                link.target = "_blank";
+                link.innerHTML = `📄 ${m.title}`;
+                
+                li.appendChild(link);
+
+                if (viewContext === 'teacher') {
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'delete-btn';
+                    delBtn.innerText = 'Remove Material';
+                    delBtn.onclick = () => removeMaterial(index);
+                    li.appendChild(delBtn);
+                }
+
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
