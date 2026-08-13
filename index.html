@@ -2,37 +2,6 @@
 <html lang="en">
 <head>
     <link rel="icon" type="image/png" href="Favicon.PNG">
-    <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.src = 'Favicon.PNG';
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      
-      // Draw circular clip
-      ctx.beginPath();
-      ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-      
-      // Draw image inside circle
-      ctx.drawImage(img, 0, 0);
-      
-      // Update link tag
-      let link = document.querySelector("link[rel*='icon']");
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-      }
-      link.href = canvas.toDataURL('image/png');
-    };
-  });
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4S Mentorship Portal</title>
