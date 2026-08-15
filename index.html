@@ -821,38 +821,55 @@
 
         // --- USER MANAGEMENT (Teacher Only) ---
         function registerUser() {
-            const email = document.getElementById('new-user-email').value.trim();
-            const pass = document.getElementById('new-user-pwd').value;
-            const role = document.getElementById('new-user-role').value;
-            const msgBox = document.getElementById('add-user-msg');
+    const email = document.getElementById('new-user-email').value.trim();
+    const pass = document.getElementById('new-user-pwd').value;
+    const role = document.getElementById('new-user-role').value;
+    const msgBox = document.getElementById('add-user-msg');
 
-            if (!email || !pass) {
-                msgBox.innerText = "Please enter both email and password.";
-                msgBox.style.color = "var(--danger)";
-                msgBox.style.display = "block";
-                return;
-            }
+    // 1. Check for empty fields
+    if (!email || !pass) {
+        msgBox.innerText = "Please enter both email and password.";
+        msgBox.style.display = "block";
+        return;
+    }
 
-            if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-                msgBox.innerText = "User with this email already exists.";
-                msgBox.style.color = "var(--danger)";
-                msgBox.style.display = "block";
-                return;
-            }
+    // 2. Prevent duplicate registrations
+    const userExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+    if (userExists) {
+        msgBox.innerText = "User is already registered!";
+        msgBox.style.display = "block";
+        return;
+    }
 
-            users.push({ email: email, password: pass, role: role });
-            localStorage.setItem('4s_users', JSON.stringify(users));
+    // 3. Save using the EXACT property names attemptLogin() is looking for
+    users.push({ 
+        email: email, 
+        password: pass, 
+        role: role 
+    });
 
-            msgBox.innerText = `Success! Created ${role} account.`;
-            msgBox.style.color = "var(--teal-accent)";
-            msgBox.style.display = "block";
-            
-            document.getElementById('new-user-email').value = '';
-            document.getElementById('new-user-pwd').value = '';
+    // 4. Sync the updated array to localStorage
+    localStorage.setItem('4s_users', JSON.stringify(users));
 
-            populateStudentSelect();
+    // 5. Show success message and reset modal
+    msgBox.style.color = "var(--success)";
+    msgBox.style.backgroundColor = "rgba(16, 185, 129, 0.1)";
+    msgBox.style.borderColor = "var(--success)";
+    msgBox.innerText = "Account created successfully!";
+    msgBox.style.display = "block";
+
+    setTimeout(() => {
+        closeModal('add-user-modal');
+        document.getElementById('new-user-email').value = '';
+        document.getElementById('new-user-pwd').value = '';
+        msgBox.style.display = "none";
+        
+        // Refresh the users list view if the teacher is currently looking at it
+        if (document.getElementById('users-list-view').classList.contains('active')) {
+            renderUsersList(); 
         }
-
+    }, 1500);
+}
         function renderUsersList() {
             const list = document.getElementById('all-users-list');
             list.innerHTML = '';
